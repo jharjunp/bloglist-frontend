@@ -6,4 +6,31 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-export default { getAll }
+const newBlog = async (blog, token) => {
+  const response = await axios.post(baseUrl, blog, {headers:{
+    'Authorization': `Bearer ${token}`
+  }})
+  return response.data
+}
+
+const updateBlog = async (blog, token) => {
+  const newBlog = {
+    title: blog.title,
+    author: blog.author,
+    url: blog.url,
+    likes: blog.likes
+  }
+  const response = await axios.put(baseUrl.concat(`/${blog.id}`), newBlog, {headers:{
+    'Authorization': `Bearer ${token}`
+  }})
+  return response.data
+}
+
+const deleteBlog = async (blog, token) => {
+  const response = await axios.delete(baseUrl.concat(`/${blog.id}`), {headers:{
+    'Authorization': `Bearer ${token}`
+  }})
+  return response.data
+}
+
+export default { getAll, newBlog, updateBlog, deleteBlog }
