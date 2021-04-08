@@ -7,9 +7,9 @@ const getAll = () => {
 }
 
 const newBlog = async (blog, token) => {
-  const response = await axios.post(baseUrl, blog, {headers:{
+  const response = await axios.post(baseUrl, blog, { headers:{
     'Authorization': `Bearer ${token}`
-  }})
+  } })
   return response.data
 }
 
@@ -20,16 +20,16 @@ const updateBlog = async (blog, token) => {
     url: blog.url,
     likes: blog.likes
   }
-  const response = await axios.put(baseUrl.concat(`/${blog.id}`), newBlog, {headers:{
+  const response = await axios.put(baseUrl.concat(`/${blog.id}`), newBlog, { headers:{
     'Authorization': `Bearer ${token}`
-  }})
+  } })
   return response.data
 }
 
 const deleteBlog = async (blog, token) => {
-  const response = await axios.delete(baseUrl.concat(`/${blog.id}`), {headers:{
+  const response = await axios.delete(baseUrl.concat(`/${blog.id}`), { headers:{
     'Authorization': `Bearer ${token}`
-  }})
+  } })
   return response.data
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/loginForm'
-import BlogForm from './components/blogForm'
+import BlogForm from './components/BlogForm'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -18,12 +18,11 @@ const App = () => {
   const [Message, setMessage] = useState(null)
 
   const blogFormRef = useRef()
-  const blogRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -56,30 +55,27 @@ const App = () => {
     }
   }
 
-  const logout = (event) => {
+  const logout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
 
   const handleUsernameChange = (event) => {
-    console.log(event.target.value)
     setUsername(event.target.value)
   }
 
   const handlePasswordChange = (event) => {
-    console.log(event.target.value)
     setPassword(event.target.value)
   }
 
   const newBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    console.log('New blog to be created: ',blogObject.title )
     try {
       const blogi = await blogService.newBlog({
         title: blogObject.title,
         author: blogObject.author,
         url: blogObject.url
-        }, user.token)
+      }, user.token)
       setBlogs(blogs.concat(blogi))
       setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
       setTimeout(() => {
@@ -94,10 +90,6 @@ const App = () => {
   }
 
   const like = async (blogObject) => {
-    const currentLikes = blogObject.likes
-    console.log('Current Likes:', currentLikes)
-    console.log('LIkes plus yksi:',blogObject.likes +1 )
-    console.log('ID: ',blogObject.id )
     try {
       const blogi = await blogService.updateBlog({
         title: blogObject.title,
@@ -105,9 +97,9 @@ const App = () => {
         url: blogObject.url,
         likes: blogObject.likes +1,
         id: blogObject.id
-        }, user.token)
+      }, user.token)
       setBlogs(blogs.map(blog => blog.id !== blogi.id ? blog : blogi))
-      setMessage(`a new like added`)
+      setMessage('a new like added')
       setTimeout(() => {
         setMessage(null)
       }, 3000)
@@ -120,24 +112,26 @@ const App = () => {
   }
 
   const deleteBlog = async (blogObject) => {
-    try {
-      const blogi = await blogService.deleteBlog({
-        title: blogObject.title,
-        author: blogObject.author,
-        url: blogObject.url,
-        likes: blogObject.likes,
-        id: blogObject.id
+    if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
+      try {
+        await blogService.deleteBlog({
+          title: blogObject.title,
+          author: blogObject.author,
+          url: blogObject.url,
+          likes: blogObject.likes,
+          id: blogObject.id
         }, user.token)
-      setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
-      setMessage(`a blog was deleted`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
-    } catch (exception) {
-      setErrorMessage('Bad delete!')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 3000)
+        setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+        setMessage('a blog was deleted')
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      } catch (exception) {
+        setErrorMessage('Bad delete!')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 3000)
+      }
     }
   }
 
@@ -146,14 +140,14 @@ const App = () => {
       <BlogForm newBlog={newBlog} />
     </Togglable>
   )
-  
+
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
         <Notification message={errorMessage} style = {false} />
-        <LoginForm login = {login} username = {username} handleUsernameChange = {handleUsernameChange} 
-        password = {password} handlePasswordChange = {handlePasswordChange} />
+        <LoginForm login = {login} username = {username} handleUsernameChange = {handleUsernameChange}
+          password = {password} handlePasswordChange = {handlePasswordChange} />
       </div>
     )
   }
@@ -165,7 +159,8 @@ const App = () => {
       {blogForm()}
       {blogs.sort(function(a,b) {
         return b.likes - a.likes}).map(blog =>
-          <Blog key={blog.id} blog={blog} like={like} deleteBlog={deleteBlog} />
+        <Blog key={blog.id} blog={blog} like={like} deleteBlog={deleteBlog}
+          user={user} />
       )}
     </div>
   )

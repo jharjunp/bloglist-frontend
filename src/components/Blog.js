@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
-const Blog = ({ blog, like, deleteBlog }) => {
+const Blog = ({ blog, like, deleteBlog, user }) => {
 
   const [form, setForm] = useState(false)
 
@@ -12,19 +12,19 @@ const Blog = ({ blog, like, deleteBlog }) => {
     marginBottom: 5
   }
 
+  const remove = { display: user.username === blog.user.username ? '' : 'none' }
+  console.log('User: ', user)
+  console.log('Blog: ', blog)
+  console.log('Remove: ', remove)
+  console.log('Blog User', blog.user)
+
   const short = { display: form ? 'none' : '' }
   const long = { display: form ? '' : 'none' }
-  
+
   const toggleForm = () => {
     setForm(!form)
   }
-/*
-  useImperativeHandle(ref, () => {
-    return {
-      toggleForm
-    }
-  })
-*/
+
   const newLike = (event) => {
     event.preventDefault()
     like(blog)
@@ -36,18 +36,20 @@ const Blog = ({ blog, like, deleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <div style={short}>
-        <p> {blog.title} <button onClick={toggleForm}>view</button></p>
+        <p> {blog.title} {blog.author} <button id='view' onClick={toggleForm}>view</button></p>
       </div>
-      <div style={long}>
-        <p> {blog.title} <button onClick={toggleForm}>hide</button></p>
+      <div style={long} className='longBlog'>
+        <p> {blog.title} <button id='hide' onClick={toggleForm}>hide</button></p>
         <p> {blog.url}</p>
-        <p>likes: {blog.likes} <button onClick={newLike}>like</button></p>
-        <p> {blog.author} </p>
-        <p><button onClick={newDeleteBlog}>remove</button></p>
+        <p>likes: {blog.likes} <button id='like' onClick={newLike}>like</button></p>
+        <p> {blog.user.name} </p>
+        <div style={remove}>
+          <p><button id='remove' onClick={newDeleteBlog}>remove</button></p>
+        </div>
       </div>
-    </div>  
+    </div>
   )
 }
 
