@@ -7,6 +7,25 @@ describe('Blog app', function() {
       password: 'Salainen'
     }
     cy.request('POST', 'http://localhost:3003/api/users/', user)
+    cy.login({ username: 'HemmoP', password: 'Salainen' })
+    cy.createBlog({
+      title: 'React patterns',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 1
+    })
+    cy.createBlog({
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 2
+    })
+    cy.createBlog({
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 3
+    })
     cy.visit('http://localhost:3000')
   })
 
@@ -15,6 +34,7 @@ describe('Blog app', function() {
   })
 
   it('login fails with wrong password', function() {
+    cy.get('#logout-button').click()
     cy.get('#username').type('HemmoP')
     cy.get('#password').type('wrong')
     cy.get('#login-button').click()
@@ -28,10 +48,6 @@ describe('Blog app', function() {
 
   describe('when logged in', function() {
     beforeEach(function() {
-      cy.get('#username').type('HemmoP')
-      cy.get('#password').type('Salainen')
-      cy.get('#login-button').click()
-      cy.contains('Hemmo Paskiainen logged in')
     })
 
     it('a new blog can be created', function() {
@@ -55,21 +71,29 @@ describe('Blog app', function() {
       cy.contains('likes')
         .get('#like')
         .click()
-      cy.contains('likes: 1')
+      cy.contains('likes: 4')
     })
 
-    it.only('user can delete his/her own blog', function () {
-      cy.contains('new blog').click()
-      cy.get('#title').type('yet another blog created by cypress')
-      cy.get('#author').type('cypress')
-      cy.get('#url').type('www.cypress.com')
-      cy.get('#new-blog').click()
-      cy.contains('yet another blog created by cypress')
+    it('user can delete his/her own blog', function () {
+      cy.visit('http://localhost:3000')
+      cy.get('.blog')
         .get('#view')
         .click()
       cy.get('#remove')
         .click()
-      cy.contains('yet another blog created by cypress').should('not.exist')
+      cy.contains('Canonical string reduction').should('not.exist')
+    })
+  })
+
+  describe('Blogs are sorted by likes', function() {
+    beforeEach(function() {
+    })
+    it('Bloga are sorted by likes', function() {
+      cy.get('ul li:first').should('contain', 'Canonical string reduction' )
+      cy.get('ul').find('li').find('#view').last().click()
+      cy.get('ul').find('button').eq(-2).click().click().click()
+      cy.visit('http://localhost:3000')
+      cy.get('ul li:first').should('contain', 'React patterns' )
     })
   })
 })

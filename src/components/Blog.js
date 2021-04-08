@@ -6,17 +6,15 @@ const Blog = ({ blog, like, deleteBlog, user }) => {
 
   const blogStyle = {
     paddingTop: 10,
+    listStyle: 'none',
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
+    marginLeft: 0
   }
 
   const remove = { display: user.username === blog.user.username ? '' : 'none' }
-  console.log('User: ', user)
-  console.log('Blog: ', blog)
-  console.log('Remove: ', remove)
-  console.log('Blog User', blog.user)
 
   const short = { display: form ? 'none' : '' }
   const long = { display: form ? '' : 'none' }
@@ -38,15 +36,15 @@ const Blog = ({ blog, like, deleteBlog, user }) => {
   return (
     <div style={blogStyle} className='blog'>
       <div style={short}>
-        <p> {blog.title} {blog.author} <button id='view' onClick={toggleForm}>view</button></p>
+        <li> {blog.title} {blog.author} <button id='view' onClick={toggleForm}>view</button></li>
       </div>
       <div style={long} className='longBlog'>
-        <p> {blog.title} <button id='hide' onClick={toggleForm}>hide</button></p>
-        <p> {blog.url}</p>
-        <p>likes: {blog.likes} <button id='like' onClick={newLike}>like</button></p>
-        <p> {blog.user.name} </p>
+        <li> {blog.title} <button id='hide' onClick={toggleForm}>hide</button></li>
+        <li> {blog.url}</li>
+        <li>likes: {blog.likes} <button id='like' onClick={newLike}>like</button></li>
+        <li> {blog.user.name} </li>
         <div style={remove}>
-          <p><button id='remove' onClick={newDeleteBlog}>remove</button></p>
+          <li><button id='remove' onClick={newDeleteBlog}>remove</button></li>
         </div>
       </div>
     </div>

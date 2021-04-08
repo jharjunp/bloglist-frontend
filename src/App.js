@@ -76,6 +76,7 @@ const App = () => {
         author: blogObject.author,
         url: blogObject.url
       }, user.token)
+
       setBlogs(blogs.concat(blogi))
       setMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
       setTimeout(() => {
@@ -155,13 +156,15 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification message={Message} style = {true} />
-      <p>{user.name} logged in <button onClick={logout}>{'logout'}</button></p>
+      <p>{user.name} logged in <button id='logout-button' onClick={logout}>{'logout'}</button></p>
       {blogForm()}
-      {blogs.sort(function(a,b) {
-        return b.likes - a.likes}).map(blog =>
-        <Blog key={blog.id} blog={blog} like={like} deleteBlog={deleteBlog}
-          user={user} />
-      )}
+      <ul>
+        {blogs.sort(function(a,b) {
+          return b.likes - a.likes}).map(blog =>
+          <Blog key={blog.id} blog={blog} like={like} deleteBlog={deleteBlog}
+            user={user} />
+        )}
+      </ul>
     </div>
   )
 }
